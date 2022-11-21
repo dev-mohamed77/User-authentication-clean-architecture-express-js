@@ -10,7 +10,6 @@ import jwt from "jsonwebtoken";
 import { injectable } from "tsyringe";
 import AuthPostgresqlDataSource from "../../data/data-sources/postgresql/auth";
 import AuthRepositoryImp from "../../data/repository/auth";
-import RefreshTokenUseCase from "../usecase/auth/refresh_token";
 
 const logger = new Logger("auth");
 
@@ -18,8 +17,7 @@ const logger = new Logger("auth");
 class AuthController {
   constructor(
     public register_useCase: RegisterUseCase,
-    public login_useCase: LoginUseCase,
-    public refresh_token_useCase: RefreshTokenUseCase
+    public login_useCase: LoginUseCase
   ) {}
 
   async register(req: Request, res: Response, next: NextFunction) {
@@ -109,59 +107,6 @@ class AuthController {
 
   public logout(req: Request, res: Response, next: NextFunction) {
     throw "Unimplemtation method";
-  }
-
-  public async refresh_token(req: Request, res: Response, next: NextFunction) {
-    const { refresh_token } = req.body;
-    try {
-      if (!refresh_token) {
-        res
-          .status(401)
-          .json({ status: false, message: "You are not authenticated" });
-      } else {
-        jwt.verify(
-          refresh_token,
-          "YOU_CAN",
-          async (err: any, user_result: any) => {
-            if (err) {
-              res.status(401).json({ status: false, result: "Token is valid" });
-            } else {
-              const user = await this.refresh_token_useCase.execute(
-                user_result.id
-              );
-
-              if (!user.length) {
-                const message = "user is not exist";
-                throw new ApiError(message, 400, message);
-              }
-
-              const token_sign = jwt.sign(
-                {
-                  id: user[0].id,
-                  username: user[0].username,
-                  email: user[0].email,
-                },
-                "YOU CAN",
-                { expiresIn: "5h" }
-              );
-
-              res.status(200).json({
-                status: true,
-                result: { ...user[0], token: token_sign },
-              });
-              logger.infoWithObject("Login successfully", {
-                token_sign,
-                user,
-              });
-            }
-          }
-        );
-      }
-    } catch (err) {
-      console.log(err);
-      next(err);
-      logger.errorWithObject(err.name || "Registration error", err);
-    }
   }
 }
 

@@ -42,13 +42,6 @@ class AuthPostgresqlDataSource implements AuthDataSource {
     return result.rows;
   }
 
-  async refresh_token(id: string): Promise<any[]> {
-    const query = "SELECT * FROM userS WHERE id = $1";
-    const value = [id];
-    const result = await connection(query, value);
-    return result.rows;
-  }
-
   logout(): void {
     throw new Error("Method not implemented.");
   }

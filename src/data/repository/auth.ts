@@ -21,9 +21,6 @@ class AuthRepositoryImp implements AuthRepository {
   logout(): Promise<any> {
     throw new Error("Method not implemented.");
   }
-  async refresh_token(id: string): Promise<any[]> {
-    return await this.auth_data_source.refresh_token(id);
-  }
 }
 
 export = AuthRepositoryImp;

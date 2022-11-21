@@ -28,10 +28,4 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) =>
   auth_controller.login(req, res, next)
 );
 
-router.get(
-  "/refresh-token",
-  (req: Request, res: Response, next: NextFunction) =>
-    auth_controller.refresh_token(req, res, next)
-);
-
 export = router;
